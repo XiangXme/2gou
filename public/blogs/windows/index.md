@@ -15,12 +15,8 @@
 
 ### 🌄截图：
 
-![](C:\Users\Rt622\Desktop\QQ20260126-022729.png)
+![](/blogs/windows/5db3ff9d7811d5b2.png)
 
 ---
-
-### 📥下载：
-
-[https://erli.lanzoub.com/iBFIa3h0lqxg](蓝奏盘下载)
 
 
