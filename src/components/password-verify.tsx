@@ -26,6 +26,11 @@ export function PasswordVerify({ category, onVerify }: PasswordVerifyProps) {
 		}
 	}
 
+	const handleClose = () => {
+		// 关闭模态框，返回上一页
+		history.back()
+	}
+
 	return (
 		<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50'>
 			<motion.div
@@ -34,7 +39,15 @@ export function PasswordVerify({ category, onVerify }: PasswordVerifyProps) {
 				transition={{ duration: 0.3 }}
 				className='bg-white/80 backdrop-blur-sm rounded-xl border p-6 w-full max-w-md shadow-lg'
 			>
-				<h2 className='text-lg font-medium mb-4'>密码访问</h2>
+				<div className='flex justify-between items-center mb-4'>
+					<h2 className='text-lg font-medium'>密码访问</h2>
+					<button
+						className='text-secondary hover:text-primary'
+						onClick={handleClose}
+					>
+						×
+					</button>
+				</div>
 				<p className='text-sm text-secondary mb-4'>该分类需要密码访问，请输入密码</p>
 				
 				<div className='space-y-3'>
@@ -51,12 +64,20 @@ export function PasswordVerify({ category, onVerify }: PasswordVerifyProps) {
 						<p className='text-sm text-red-500'>{error}</p>
 					)}
 					
-					<button
-						className='w-full rounded-lg border bg-white/60 backdrop-blur-sm px-3 py-2 text-sm whitespace-nowrap hover:bg-white/80 transition-colors'
-						onClick={handleVerify}
-					>
-						验证
-					</button>
+					<div className='flex gap-3'>
+						<button
+							className='flex-1 rounded-lg border bg-white/60 backdrop-blur-sm px-3 py-2 text-sm whitespace-nowrap hover:bg-white/80 transition-colors'
+							onClick={handleClose}
+						>
+							取消
+						</button>
+						<button
+							className='flex-1 rounded-lg border bg-white/60 backdrop-blur-sm px-3 py-2 text-sm whitespace-nowrap hover:bg-white/80 transition-colors'
+							onClick={handleVerify}
+						>
+							验证
+						</button>
+					</div>
 				</div>
 			</motion.div>
 		</div>
