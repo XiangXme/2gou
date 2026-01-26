@@ -37,27 +37,45 @@ export default function Page() {
 					markAsRead(slug)
 
 					// 检查是否需要密码验证
-					const category = blogData.config.category
-					if (siteContent.enablePasswordAccess && siteContent.passwordAccessPassword && 
-						siteContent.passwordAccessCategories?.includes(category)) {
-						// 检查是否已经验证过
-						const isVerified = localStorage.getItem(`password_${category}`) === 'verified'
-						const storedHash = localStorage.getItem(`password_${category}_hash`)
-						const currentHash = siteContent.passwordAccessPassword
-						
-						// 如果验证过且密码没有改变，则直接显示内容
-						if (isVerified && storedHash === currentHash) {
-							setIsVerified(true)
-						} else {
-							// 清除旧的验证状态
-							localStorage.removeItem(`password_${category}`)
-							localStorage.removeItem(`password_${category}_hash`)
-							setIsVerified(false)
-						}
-					} else {
-						// 不需要密码验证
+				const category = blogData.config.category
+				const isArticlePasswordProtected = blogData.config.passwordProtected && blogData.config.password
+				const isCategoryPasswordProtected = siteContent.enablePasswordAccess && siteContent.passwordAccessPassword && 
+					siteContent.passwordAccessCategories?.includes(category)
+				
+				if (isArticlePasswordProtected) {
+					// 检查文章密码是否已经验证过
+					const isVerified = localStorage.getItem(`article_password_${slug}`) === 'verified'
+					const storedHash = localStorage.getItem(`article_password_${slug}_hash`)
+					const currentHash = blogData.config.password
+					
+					// 如果验证过且密码没有改变，则直接显示内容
+					if (isVerified && storedHash === currentHash) {
 						setIsVerified(true)
+					} else {
+						// 清除旧的验证状态
+						localStorage.removeItem(`article_password_${slug}`)
+						localStorage.removeItem(`article_password_${slug}_hash`)
+						setIsVerified(false)
 					}
+				} else if (isCategoryPasswordProtected) {
+					// 检查分类密码是否已经验证过
+					const isVerified = localStorage.getItem(`password_${category}`) === 'verified'
+					const storedHash = localStorage.getItem(`password_${category}_hash`)
+					const currentHash = siteContent.passwordAccessPassword
+					
+					// 如果验证过且密码没有改变，则直接显示内容
+					if (isVerified && storedHash === currentHash) {
+						setIsVerified(true)
+					} else {
+						// 清除旧的验证状态
+						localStorage.removeItem(`password_${category}`)
+						localStorage.removeItem(`password_${category}_hash`)
+						setIsVerified(false)
+					}
+				} else {
+					// 不需要密码验证
+					setIsVerified(true)
+				}
 				}
 			} catch (e: any) {
 				if (!cancelled) setError(e?.message || '加载失败')
@@ -97,12 +115,17 @@ export default function Page() {
 
 	// 检查是否需要密码验证
 	const category = blog.config.category
-	const needPassword = siteContent.enablePasswordAccess && siteContent.passwordAccessPassword && 
+	const isArticlePasswordProtected = blog.config.passwordProtected && blog.config.password
+	const isCategoryPasswordProtected = siteContent.enablePasswordAccess && siteContent.passwordAccessPassword && 
 		siteContent.passwordAccessCategories?.includes(category)
 
 	// 如果需要密码验证且未验证，显示密码验证模态框
-	if (needPassword && !isVerified) {
-		return <PasswordVerify category={category} onVerify={() => setIsVerified(true)} />
+	if ((isArticlePasswordProtected || isCategoryPasswordProtected) && !isVerified) {
+		return <PasswordVerify 
+			category={isCategoryPasswordProtected ? category : undefined} 
+			articleSlug={isArticlePasswordProtected ? slug : undefined} 
+			onVerify={() => setIsVerified(true)} 
+		/>
 	}
 
 	return (
